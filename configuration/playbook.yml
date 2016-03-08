@@ -1,0 +1,51 @@
+---
+
+- hosts: melder
+
+  tasks:
+
+  - name: ensure apt cache is up to date
+    apt: update_cache=yes
+    become: yes
+    become_method: sudo
+
+#  - name: ensure packages are up to date
+#    apt: upgrade=dist
+#    become: yes
+#    become_method: sudo
+
+  - name: ensure the torch repo is cloned
+    git: repo=https://github.com/torch/distro.git
+         dest=~/torch
+         recursive=yes
+         force=yes
+         accept_hostkey=yes
+
+  - name: ensure torch's dependencies are installed
+    shell: ./install-deps
+           chdir=~/torch
+
+  - name: ensure torch is installed 
+    command: bash install.sh -b
+             chdir=~/torch
+
+  - name: ensure protobuf is installed 
+    apt: name={{ item }}
+         state=latest
+    with_items:
+      - libprotobuf-dev
+      - protobuf-compiler
+    become: yes
+    become_method: sudo
+
+  - name: install loadcaffe
+    command: ~/torch/install/bin/luarocks install loadcaffe
+
+  - name: ensure the neural-style repo is cloned
+    git: repo=https://github.com/jcjohnson/neural-style.git
+         dest=~/neural-style
+
+  - name: ensure the models are downloaded 
+    command: bash models/download_models.sh
+             chdir=~/neural-style
+ 

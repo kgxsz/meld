@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description" : "devops-part-three, infrastructure",
+  "Description" : "meld infrastructure",
 
   "Resources" : {
 
@@ -8,7 +8,7 @@
       "Type" : "AWS::EC2::VPC",
       "Properties" : {
         "CidrBlock" : "10.0.0.0/16",
-        "Tags" : [ {"Key" : "Name", "Value" : "devops-part-three"} ]
+        "Tags" : [ {"Key" : "Name", "Value" : "meld"} ]
       }
     },
 
@@ -18,15 +18,15 @@
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
         "CidrBlock" : "10.0.0.0/24",
-        "AvailabilityZone" : "eu-west-1a",
-        "Tags" : [ {"Key" : "Name", "Value" : "devops-part-three"} ]
+        "AvailabilityZone" : "us-east-1a",
+        "Tags" : [ {"Key" : "Name", "Value" : "meld"} ]
       }
     },
 
     "InternetGateway" : {
       "Type" : "AWS::EC2::InternetGateway",
       "Properties" : {
-        "Tags" : [ {"Key" : "Name", "Value" : "devops-part-three"}]
+        "Tags" : [ {"Key" : "Name", "Value" : "meld"}]
       }
     },
 
@@ -42,7 +42,7 @@
       "Type" : "AWS::EC2::RouteTable",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "Tags" : [ { "Key" : "Name", "Value" : "devops-part-three"} ]
+        "Tags" : [ { "Key" : "Name", "Value" : "meld"} ]
       }
     },
 
@@ -68,7 +68,7 @@
       "Type" : "AWS::EC2::NetworkAcl",
       "Properties" : {
         "VpcId" : { "Ref" : "VPC" },
-        "Tags" : [ { "Key" : "Name", "Value" : "devops-part-three" } ]
+        "Tags" : [ { "Key" : "Name", "Value" : "meld" } ]
       }
     },
 
@@ -154,7 +154,7 @@
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : "0.0.0.0/0"},
           {"IpProtocol" : "tcp", "FromPort" : "1024", "ToPort" : "65535", "CidrIp" : "10.0.0.0/24"}
         ],
-        "Tags" : [ { "Key" : "Name", "Value" : "devops-part-three" } ]
+        "Tags" : [ { "Key" : "Name", "Value" : "meld" } ]
       }
     },
 
@@ -170,7 +170,7 @@
     "EC2InstanceMelder" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
-        "ImageId" : "ami-25d76556",
+        "ImageId" : "ami-b36981d8",
         "InstanceType" : "g2.2xlarge",
         "KeyName" : "main",
         "SubnetId" : { "Ref" : "Subnet" },
