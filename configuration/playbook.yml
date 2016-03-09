@@ -10,6 +10,9 @@
     become: yes
     become_method: sudo
 
+  - name: ensure that torch is deleted
+    file: path=~/torch state=absent
+
   - name: ensure the torch repo is cloned
     git: repo=https://github.com/torch/distro.git
          dest=~/torch
@@ -22,8 +25,8 @@
            chdir=~/torch
 
   - name: ensure torch is installed 
-    command: bash install.sh -b
-             chdir=~/torch
+    shell: ./install.sh -b
+           chdir=~/torch
 
   - name: ensure protobuf is installed 
     apt: name={{ item }}
@@ -34,8 +37,12 @@
     become: yes
     become_method: sudo
 
-  - name: install loadcaffe
-    command: ~/torch/install/bin/luarocks install loadcaffe
+  - name: ensure relevant luarocks are installed
+    command: ~/torch/install/bin/luarocks install {{ item }} 
+    with_items:
+      - loadcaffe
+      - cunn
+      - cutorch
 
   - name: ensure the neural-style repo is cloned
     git: repo=https://github.com/jcjohnson/neural-style.git
@@ -44,4 +51,6 @@
   - name: ensure the models are downloaded 
     command: bash models/download_models.sh
              chdir=~/neural-style
- 
+
+  - name: ensure the styles directory has been copied to remote host
+    copy: src=styles dest=~/neural-style
