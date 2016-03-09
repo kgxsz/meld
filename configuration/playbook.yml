@@ -1,6 +1,7 @@
 ---
 
 - hosts: melder
+  remote_user: ubuntu
 
   tasks:
 
@@ -8,11 +9,6 @@
     apt: update_cache=yes
     become: yes
     become_method: sudo
-
-#  - name: ensure packages are up to date
-#    apt: upgrade=dist
-#    become: yes
-#    become_method: sudo
 
   - name: ensure the torch repo is cloned
     git: repo=https://github.com/torch/distro.git

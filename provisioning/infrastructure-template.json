@@ -158,32 +158,34 @@
       }
     },
 
-    "EIPMelder" : {
-      "Type" : "AWS::EC2::EIP",
-      "Properties" : {
-        "InstanceId" : { "Ref" : "EC2InstanceMelder" },
-        "Domain" : "vpc"
-      },
-      "DependsOn" : "VPCGatewayAttachment"
-    },
-
-    "EC2InstanceMelder" : {
+    "EC2Instance" : {
       "Type" : "AWS::EC2::Instance",
       "Properties" : {
         "ImageId" : "ami-b36981d8",
         "InstanceType" : "g2.2xlarge",
         "KeyName" : "main",
-        "SubnetId" : { "Ref" : "Subnet" },
-        "SecurityGroupIds" : [ { "Ref" : "SecurityGroup" } ],
+        "NetworkInterfaces" : [
+           { "AssociatePublicIpAddress" : "true",
+             "DeviceIndex": "0",
+             "GroupSet": [{ "Ref" : "SecurityGroup" }],
+             "SubnetId": { "Ref" : "Subnet" }}
+        ],
         "Tags" : [ { "Key" : "Name", "Value" : "Melder" } ]
+      },
+      "DependsOn" : "VPCGatewayAttachment"
+    },
+
+    "DNSRecord" : {
+      "Type" : "AWS::Route53::RecordSet",
+      "Properties" : {
+        "HostedZoneName" : "keigo.io.",
+        "Name" : "melder.keigo.io",
+        "Type" : "A",
+        "TTL" : "900",
+        "ResourceRecords" : [
+          { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] }
+        ]
       }
-    }
-  },
-
-  "Outputs" : {
-
-    "MelderPublicIp" : {
-      "Value" : { "Fn::GetAtt" : [ "EC2InstanceMelder", "PublicIp" ] }
     }
   }
 }
