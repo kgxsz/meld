@@ -5,11 +5,6 @@
 
   tasks:
 
-  - name: ensure apt cache is up to date
-    apt: update_cache=yes
-    become: yes
-    become_method: sudo
-
   - name: ensure that torch is deleted
     file: path=~/torch state=absent
 
@@ -24,13 +19,14 @@
     shell: ./install-deps
            chdir=~/torch
 
-  - name: ensure torch is installed 
+  - name: ensure torch is installed
     shell: ./install.sh -b
            chdir=~/torch
 
-  - name: ensure protobuf is installed 
+  - name: ensure protobuf is installed
     apt: name={{ item }}
          state=latest
+         update_cache=yes
     with_items:
       - libprotobuf-dev
       - protobuf-compiler
@@ -38,7 +34,7 @@
     become_method: sudo
 
   - name: ensure relevant luarocks are installed
-    command: ~/torch/install/bin/luarocks install {{ item }} 
+    command: ~/torch/install/bin/luarocks install {{ item }}
     with_items:
       - loadcaffe
       - cunn
@@ -48,7 +44,7 @@
     git: repo=https://github.com/jcjohnson/neural-style.git
          dest=~/neural-style
 
-  - name: ensure the models are downloaded 
+  - name: ensure the models are downloaded
     command: bash models/download_models.sh
              chdir=~/neural-style
 
